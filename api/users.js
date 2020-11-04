@@ -56,6 +56,10 @@ function get(req, res) {
 function post(req, res) {
   const data = req.body.users
 
+  if (!Array.isArray(data)) {
+    return res.json(handleError('Invalid data.'))
+  }
+
   for (let obj of data) {
     if (!obj.name || !obj.email) {
       return res.json(handleError('Invalid user entry.'))
