@@ -87,7 +87,7 @@ function post(req, res) {
     if (err) return res.json(handleError(err.message))
 
     data.forEach(function(user) {
-      user.id = users.length + 1
+      user.id = users.length + 1 // create user id
       users.push(user)
     })
 
