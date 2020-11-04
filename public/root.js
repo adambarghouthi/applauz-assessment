@@ -109,6 +109,7 @@ class Root extends React.Component {
         status: 'error',
         message: 'Add users before pressing create.'
       })
+      return
     }
 
     fetch('/api/users', {
