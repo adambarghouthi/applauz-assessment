@@ -119,9 +119,7 @@ class Root extends React.Component {
           Authentication: 'secret',
           'Content-Type': 'application/json'
         },
-        body: {
-          users: JSON.stringify(this.state.users)
-        }
+        body: JSON.stringify({ users: this.state.users })
       })
       .then((res) => {
         res
@@ -138,13 +136,11 @@ class Root extends React.Component {
     this.cleanAlerts()
 
     const { name, email } = this.state
-    const regex = /\s*,\s*/g
     const query = {}
     let url = '/api/users?'
 
-    // remove white spaces between commas
-    if (name) query.name = name.replace(regex, ',')
-    if (email) query.email = email.replace(regex, ',').toLowerCase()
+    if (name.trim()) query.name = name.trim()
+    if (email.trim()) query.email = email.trim()
 
     // urlify the query obj
     url += this.serialize(query)
