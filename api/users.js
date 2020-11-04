@@ -43,6 +43,12 @@ function get(req, res) {
   const cb = function(err, users) {
     if (err) return res.json(handleError(err.message))
 
+    // if query is empty
+    // it means return all users
+    if (Object.keys(req.query).length) {
+      return res.json(handleSuccess(users))
+    }
+
     const fetchedUsers = users.filter(function(user) {
       for (let key in req.query) {
         const value = user[key]
