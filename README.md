@@ -46,7 +46,16 @@ Delimit strings with comma(s) to add more than one search term.
 
 | Body Parameters   |            |
 |:----------|-------------:
-| users | ```array``` |
+| users | ```array of user objects``` |
+
+User object:
+
+```bash
+{
+  name: 'John Doe',
+  email: 'johndoe@gmail.com'
+}
+```
 
 ### Responses
 
