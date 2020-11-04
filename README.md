@@ -49,6 +49,7 @@ Delimit strings with comma(s) to add more than one search term.
 | users | ```array of user objects``` |
 
 User object:
+```id``` is automatically created on back-end.
 
 ```bash
 {
