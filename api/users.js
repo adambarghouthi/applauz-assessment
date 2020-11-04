@@ -47,7 +47,7 @@ function get(req, res) {
 }
 
 function post(req, res) {
-  const data = req.body
+  const data = req.body.users
 
   const writeCb = function(err, users) {
     if (err) return res.json(handleError(err.message))

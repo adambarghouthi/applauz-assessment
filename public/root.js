@@ -119,7 +119,9 @@ class Root extends React.Component {
           Authentication: 'secret',
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify(this.state.users)
+        body: {
+          users: JSON.stringify(this.state.users)
+        }
       })
       .then((res) => {
         res
