@@ -3,45 +3,274 @@
 const e = React.createElement
 
 class Root extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { liked: false }
+  constructor() {
+    super()
+    this.state = {
+      form: 'query',
+      name: '',
+      email: '',
+      users: [],
+      loading: false,
+      success: null,
+      error: null
+    }
+
+    this.getUsers = this.getUsers.bind(this)
+    this.postUsers = this.postUsers.bind(this)
+    this.cleanAlerts = this.cleanAlerts.bind(this)
+    this.addUser = this.addUser.bind(this)
+    this.removeUser = this.removeUser.bind(this)
+
+    this.handleChange = this.handleChange.bind(this)
+    this.handleResult = this.handleResult.bind(this)
   }
 
-  getUsers() {
+  handleChange(e) {
+    e.preventDefault()
 
+    const val = e.target.value.trim()
+
+    this.setState((prevState) => ({
+      ...prevState,
+      [e.target.name]: val
+    }))
+  }
+
+  handleResult(json) {
+    console.log(json)
+    if (json.status === 'error') {
+      this.setState(prevState => ({
+        ...prevState,
+        error: json.message
+      }))
+    } else {
+      this.setState(prevState => ({
+        ...prevState,
+        success: json.body
+      }))
+    }
+  }
+
+  cleanAlerts() {
+    this.setState(prevState => ({
+      ...prevState,
+      success: null,
+      error: null
+    }))
+  }
+
+  validateEmail(email) {
+    const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+    return re.test(email)
+  }
+
+  serialize(obj) {
+    let str = [];
+    for (let p in obj) {
+      if (obj.hasOwnProperty(p)) {
+        str.push(encodeURIComponent(p) + "=" + encodeURIComponent(obj[p]));
+      }
+    }
+    return str.join("&");
+  }
+
+  addUser(user) {
+    if (!this.validateEmail(user.email)) {
+      this.handleResult({
+        status: 'error',
+        message: 'Invalid email address.'
+      })
+      return
+    }
+
+    this.setState(prevState => ({
+      ...prevState,
+      name: '',
+      email: '',
+      users: [ ...prevState.users, user ]
+    }))
+
+    this.cleanAlerts()
+  }
+
+  removeUser(index) {
+    this.setState(prevState => ({
+      ...prevState,
+      users: prevState.users.filter((u, i) => i !== index)
+    }))
   }
 
   postUsers() {
+    this.cleanAlerts()
+
     fetch('/api/users', {
-        method: 'GET',
+        method: 'POST',
         headers: {
           Authentication: 'secret',
           'Content-Type': 'application/json'
         },
+        body: JSON.stringify(this.state.users)
       })
-      .then(function (res) {
+      .then((res) => {
         res
           .json()
-          .then((json) => console.log(json))
+          .then((json) => this.handleResult(json))
       })
-      .catch(function (error) {
-        console.log("Error: " + error)
+      .catch((error) => this.handleResult({
+        status: 'error',
+        message: error.message
+      }))
+  }
+
+  getUsers() {
+    this.cleanAlerts()
+
+    const { name, email } = this.state
+    const regex = /\s*,\s*/g
+    const query = {}
+    let url = '/api/users?'
+
+    // remove white spaces between commas
+    if (name) query.name = name.replace(regex, ',')
+    if (email) query.email = email.replace(regex, ',').toLowerCase()
+
+    // urlify the query obj
+    url += this.serialize(query)
+
+    fetch(url, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authentication: 'secret'
+        }
       })
+      .then((res) => {
+        res
+          .json()
+          .then((json) => this.handleResult(json))
+      })
+      .catch((error) => this.handleResult({
+        status: 'error',
+        message: error.message
+      }))
   }
 
   render() {
+    const { form, success, error, loading } = this.state
+
     return (
-      <div>
-        <h2>User Management</h2>
-        <p>Functionalities:</p>
-        <ul>
-          <li>Query users</li>
-          <li>Create user(s)</li>
-        </ul>
-        <button onClick={() => this.postUsers()}>
-          Post
-        </button>
+      <div className="container">
+        <div className="row">
+          <div className="col-md-12">
+            <h2>Applauz Assessment</h2>
+            <p>Functionalities:</p>
+            <ul>
+              <li>Query users</li>
+              <li>Create user(s)</li>
+            </ul>
+          </div>
+        </div>
+        <hr />
+        <div className="btn-group btn-group-toggle mb-4" data-toggle="buttons">
+          <label className={`btn btn-secondary ${form === 'query' ? 'active' : ''}`}>
+            <input type="radio" name="form" value="query" onChange={this.handleChange} /> User querying
+          </label>
+          <label className={`btn btn-secondary ${form === 'create' ? 'active' : ''}`}>
+            <input type="radio" name="form" value="create" onChange={this.handleChange} /> User creation
+          </label>
+        </div>
+        {
+          form === 'query'
+            ? <div className="row">
+                <div className="col-md-12">
+                  <h3>User Querying</h3>
+                </div>
+                <div className="col-md-4">
+                  <input type="text" className="form-control" placeholder="Name" name="name" onChange={this.handleChange} />
+                </div>
+                <div className="col-md-4">
+                  <input type="text" className="form-control" placeholder="Email" name="email" onChange={this.handleChange} />
+                </div>
+                <div className="col-md-12">
+                  <button className="btn btn-primary mt-4" onClick={() => this.getUsers()}>
+                    Search
+                  </button>
+                </div>
+              </div>
+            : null
+        }
+        {
+          form === 'create'
+            ? <div className="row">
+                <div className="col-md-12">
+                  <h3>User Creation</h3>
+                </div>
+                <div className="col-md-12">
+                  <div className="row">
+                    {
+                      this.state.users.map((user, i) =>
+                        <div key={i} className="col-md-12 mb-3">
+                          { user.name },&nbsp;
+                          { user.email }&nbsp;|&nbsp;
+                          <a
+                            role="button"
+                            tabIndex="0"
+                            onClick={() => this.removeUser(i)}>
+                            Remove
+                          </a>
+                        </div>
+                      )
+                    }
+                  </div>
+                </div>
+                <div className="col-md-4">
+                  <input type="text" className="form-control" placeholder="Name" name="name" onChange={this.handleChange} />
+                </div>
+                <div className="col-md-4">
+                  <input type="text" className="form-control" placeholder="Email" name="email" onChange={this.handleChange} />
+                </div>
+                <div className="col-md-4">
+                  <button className="btn btn-secondary" onClick={() => this.addUser({
+                    name: this.state.name,
+                    email: this.state.email
+                  })}>
+                    + Add
+                  </button>
+                </div>
+                <div className="col-md-12">
+                  <button className="btn btn-primary mt-4" onClick={() => this.postUsers()}>
+                    Create
+                  </button>
+                </div>
+              </div>
+            : null
+        }
+        {
+          error
+            ? <div className="alert alert-danger mt-3" role="alert">
+                { error }
+              </div>
+            : null
+        }
+        {
+          success
+            ? <div className="alert alert-success mt-3" role="alert">
+                Success!
+                <br />
+                {
+                  success.map(user =>
+                    <div key={user.id}>
+                      <span>{ user.id }</span>,&nbsp;
+                      <span>{ user.name }</span>,&nbsp;
+                      <span>{ user.email }</span>
+                    </div>
+                  )
+                }
+                <br />
+                { success.length } results
+              </div>
+            : null
+        }
       </div>
     )
   }
