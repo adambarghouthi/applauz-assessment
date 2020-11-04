@@ -44,7 +44,7 @@ Delimit name or email with a comma to add more than one search term.
 
 ### POST
 
-| Query Parameters   |            |
+| Body Parameters   |            |
 |:----------|-------------:
 | users | ```array``` |
 
