@@ -50,7 +50,7 @@ Delimit name or email with a comma to add more than one search term.
 
 ### Responses
 
-####Success:
+Success:
 
 ```bash
 {
@@ -59,7 +59,7 @@ Delimit name or email with a comma to add more than one search term.
 }
 ```
 
-####Error:
+Error:
 
 ```bash
 {
