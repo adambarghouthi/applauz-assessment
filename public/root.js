@@ -28,11 +28,9 @@ class Root extends React.Component {
   handleChange(e) {
     e.preventDefault()
 
-    const val = e.target.value.trim()
-
     this.setState((prevState) => ({
       ...prevState,
-      [e.target.name]: val
+      [e.target.name]: e.target.value
     }))
   }
 
