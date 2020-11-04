@@ -28,7 +28,10 @@ This is similar to MERN stack with a JSON file substituted in for MongoDB.
 
 ## API documentation
 
-Authentication: ```API TOKEN```
+| Header Parameters   |            |
+|:----------|-------------:
+| Authentication | ```API TOKEN```
+| Content-Type | ```application/json``` |
 
 ### GET
 
@@ -36,6 +39,10 @@ Authentication: ```API TOKEN```
 |:----------|-------------:
 | name | ```string```
 | email | ```string``` |
--------------------------------
 
 ### POST
+
+| Query Parameters   |            |
+|:----------|-------------:
+| users | ```array``` |
+
