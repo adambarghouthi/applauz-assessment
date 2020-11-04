@@ -28,3 +28,6 @@ This is similar to MERN stack with a JSON file substituted in for MongoDB.
 
 ## API documentation
 
+### GET
+
+### POST
