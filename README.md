@@ -40,7 +40,7 @@ This is similar to MERN stack with a JSON file substituted in for MongoDB.
 | name | ```string```
 | email | ```string``` |
 
-Delimit name or email with a comma to add more than one search term.
+Delimit strings with comma(s) to add more than one search term.
 
 ### POST
 
