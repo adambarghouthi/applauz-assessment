@@ -45,7 +45,7 @@ function get(req, res) {
 
     // if query is empty
     // it means return all users
-    if (Object.keys(req.query).length) {
+    if (!Object.keys(req.query).length) {
       return res.json(handleSuccess(users))
     }
 
