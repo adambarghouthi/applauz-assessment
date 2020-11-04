@@ -51,11 +51,13 @@ class Root extends React.Component {
   }
 
   cleanAlerts() {
-    this.setState(prevState => ({
-      ...prevState,
-      success: null,
-      error: null
-    }))
+    if (this.state.success || this.state.error) {
+      this.setState(prevState => ({
+        ...prevState,
+        success: null,
+        error: null
+      }))
+    }
   }
 
   validateEmail(email) {
