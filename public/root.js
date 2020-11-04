@@ -37,7 +37,6 @@ class Root extends React.Component {
   }
 
   handleResult(json) {
-    console.log(json)
     if (json.status === 'error') {
       this.setState(prevState => ({
         ...prevState,
@@ -75,13 +74,16 @@ class Root extends React.Component {
   }
 
   addUser(user) {
-    if (!this.validateEmail(user.email)) {
+    if (!this.validateEmail(user.email) ||
+      !user.name) {
       this.handleResult({
         status: 'error',
-        message: 'Invalid email address.'
+        message: 'Invalid user, please add a valid name and email.'
       })
       return
     }
+
+
 
     this.setState(prevState => ({
       ...prevState,
@@ -102,6 +104,14 @@ class Root extends React.Component {
 
   postUsers() {
     this.cleanAlerts()
+
+    const { users } = this.state
+    if (!users.length) {
+      this.handleResult({
+        status: 'error',
+        message: 'Add users before pressing create.'
+      })
+    }
 
     fetch('/api/users', {
         method: 'POST',
@@ -184,12 +194,29 @@ class Root extends React.Component {
             ? <div className="row">
                 <div className="col-md-12">
                   <h3>User Querying</h3>
+                  <p>
+                    Find users by name or email. If both name and email 
+                    fields are empty, system fetches all users, otherwise
+                    it queries against the set terms.
+                  </p>
                 </div>
                 <div className="col-md-4">
-                  <input type="text" className="form-control" placeholder="Name" name="name" onChange={this.handleChange} />
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Name"
+                    name="name"
+                    value={this.state.name}
+                    onChange={this.handleChange} />
                 </div>
                 <div className="col-md-4">
-                  <input type="text" className="form-control" placeholder="Email" name="email" onChange={this.handleChange} />
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Email"
+                    name="email"
+                    value={this.state.email}
+                    onChange={this.handleChange} />
                 </div>
                 <div className="col-md-12">
                   <button className="btn btn-primary mt-4" onClick={() => this.getUsers()}>
@@ -204,6 +231,9 @@ class Root extends React.Component {
             ? <div className="row">
                 <div className="col-md-12">
                   <h3>User Creation</h3>
+                  <p>
+                    Press the Add button to add a user to the list you want to save. When you're done, press Create.
+                  </p>
                 </div>
                 <div className="col-md-12">
                   <div className="row">
@@ -215,6 +245,7 @@ class Root extends React.Component {
                           <a
                             role="button"
                             tabIndex="0"
+                            style={{ color: 'red' }}
                             onClick={() => this.removeUser(i)}>
                             Remove
                           </a>
@@ -224,15 +255,27 @@ class Root extends React.Component {
                   </div>
                 </div>
                 <div className="col-md-4">
-                  <input type="text" className="form-control" placeholder="Name" name="name" onChange={this.handleChange} />
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Name"
+                    name="name"
+                    value={this.state.name}
+                    onChange={this.handleChange} />
                 </div>
                 <div className="col-md-4">
-                  <input type="text" className="form-control" placeholder="Email" name="email" onChange={this.handleChange} />
+                  <input
+                    type="text"
+                    className="form-control"
+                    placeholder="Email"
+                    name="email"
+                    value={this.state.email}
+                    onChange={this.handleChange} />
                 </div>
                 <div className="col-md-4">
                   <button className="btn btn-secondary" onClick={() => this.addUser({
-                    name: this.state.name,
-                    email: this.state.email
+                    name: this.state.name.trim(),
+                    email: this.state.email.trim()
                   })}>
                     + Add
                   </button>
