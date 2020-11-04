@@ -73,10 +73,7 @@ function post(req, res) {
   const writeCb = function(err, users) {
     if (err) return res.json(handleError(err.message))
 
-    // I would return here the newly created users
-    // but since I'm using a json file as a db
-    // it's easier to just send a success message
-    // because writing to the file returns the whole file
+    // slicing out and returning only the last users that were created
     return res.json(handleSuccess(users.slice(users.length - data.length)))
   }
 
