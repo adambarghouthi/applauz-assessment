@@ -24,6 +24,7 @@ This is similar to MERN stack with a JSON file substituted in for MongoDB.
 - Validation of user data done on the client ✔
 - Success & error handling ✔
 - API key authentication (in request headers verified by authMiddleware) ✔
+- Bonus: unit tests ☓
 
 ## API documentation
 
