@@ -55,7 +55,6 @@ function get(req, res) {
 
 function post(req, res) {
   const data = req.body.users
-  console.log(req.body)
 
   for (let obj of data) {
     if (!obj.name || !obj.email) {
