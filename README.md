@@ -48,3 +48,22 @@ Delimit name or email with a comma to add more than one search term.
 |:----------|-------------:
 | users | ```array``` |
 
+### Responses
+
+####Success:
+
+```bash
+{
+  status: 'success',
+  body: []
+}
+```
+
+####Error:
+
+```bash
+{
+  status: 'error',
+  message: 'Error message here'
+}
+```
