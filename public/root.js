@@ -83,8 +83,6 @@ class Root extends React.Component {
       return
     }
 
-
-
     this.setState(prevState => ({
       ...prevState,
       name: '',
