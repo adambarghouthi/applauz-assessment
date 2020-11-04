@@ -31,6 +31,8 @@ function handleError(error) {
   }
 }
 
+// helper for get function
+// checks if value matches query term
 function isHit(query, value) {
   if (Array.isArray(query)) {
     return query.includes(value)
