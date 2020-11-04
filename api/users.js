@@ -12,6 +12,12 @@ function isHit(query, value) {
   return query === value
 }
 
+// helper to validate emails
+function validateEmail(email) {
+  const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
+  return re.test(email)
+}
+
 function get(req, res) {
   const cb = function(err, users) {
     if (err) return res.json(handleError(err.message))
@@ -26,9 +32,10 @@ function get(req, res) {
       for (let key in req.query) {
         const value = user[key]
 
-        // splitting query by comma to see if there's
-        // more than one search term
-        const querySplit = req.query[key].split(',')
+        // regex to check white spaces between commas
+        const regex = /\s*,\s*/g
+        // remove white spaces between commas and split by comma
+        const querySplit = req.query[key].replace(regex, ',').split(',')
         let query
 
         if (querySplit.length > 1) query = querySplit
@@ -48,6 +55,16 @@ function get(req, res) {
 
 function post(req, res) {
   const data = req.body.users
+  console.log(req.body)
+
+  for (let obj of data) {
+    if (!obj.name || !obj.email) {
+      return res.json(handleError('Invalid user entry.'))
+    }
+    if (!validateEmail(obj.email)) {
+      return res.json(handleError('Please validate your user email(s).'))
+    }
+  }
 
   const writeCb = function(err, users) {
     if (err) return res.json(handleError(err.message))
